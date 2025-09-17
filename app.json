@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "unisenac",
-    "slug": "unisenac",
+    "name": "projeto-frame-web",
+    "slug": "projeto-frame-web",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "unisenac",
+    "scheme": "projeto-frame-web",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
