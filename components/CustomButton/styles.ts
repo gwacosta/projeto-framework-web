@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
     marginTop: 20,
   },
   primaryButton: {
-    backgroundColor: '#fff',
+    backgroundColor: '#3498db',
   },
   linkButton: {
     backgroundColor: 'transparent',
@@ -19,10 +19,10 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   primaryButtonText: {
-    color: '#1a237e',
+    color: '#ffffff',
   },
   linkButtonText: {
-    color: '#fff',
+    color: '#3498db',
     textDecorationLine: 'underline',
   },
 });

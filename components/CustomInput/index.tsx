@@ -7,7 +7,7 @@ interface CustomInputProps extends TextInputProps {
 }
 
 export const CustomInput = forwardRef<TextInput, CustomInputProps>(
-  ({ style, placeholderTextColor = "#rgba(255, 255, 255, 0.7)", ...rest }, ref) => {
+  ({ style, placeholderTextColor = "#95a5a6", ...rest }, ref) => {
     return (
       <TextInput
         ref={ref}
