@@ -20,27 +20,68 @@ export default function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Refs para os inputs
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
   const handleSignUp = async () => {
+    // Limpar mensagem de erro anterior
+    setErrorMessage("");
+    
+    console.log('=== INÍCIO handleSignUp ===');
+    console.log('name:', `"${name}"`);
+    console.log('email:', `"${email}"`);
+    console.log('password:', `"${password}"`);
+    
     if (!name || !email || !password) {
-      Alert.alert('Error', 'Por favor, preencha todos os campos');
+      console.log('=== CAMPOS INCOMPLETOS ===');
+      const errorMsg = 'Por favor, preencha todos os campos';
+      setErrorMessage(errorMsg);
+      
+      // Tentar Alert como backup
+      setTimeout(() => {
+        Alert.alert('Erro', errorMsg);
+      }, 100);
+      
       return;
     }
 
-    const result = await authService.signup({
-      name,
-      email,
-      password,
-    });
+    console.log('=== TODOS OS CAMPOS PREENCHIDOS ===');
+    console.log('Chamando authService.signup...');
+    
+    try {
+      const result = await authService.signup({
+        name,
+        email,
+        password,
+      });
 
-    if (result.success) {
-      router.replace('/projects');
-    } else {
-      Alert.alert('Error', result.message || 'Falha ao criar conta');
+      console.log('Resultado do signup:', result);
+
+      if (result.success) {
+        console.log('Sucesso - navegando para /projects');
+        router.replace('/projects');
+      } else {
+        console.log('Erro no signup - mostrando alert');
+        const errorMsg = result.message || 'Falha ao criar conta';
+        setErrorMessage(errorMsg);
+        
+        // Tentar Alert como backup
+        setTimeout(() => {
+          Alert.alert('Erro', errorMsg);
+        }, 100);
+      }
+    } catch (error) {
+      console.log('Erro na execução do signup:', error);
+      const errorMsg = 'Ocorreu um erro inesperado';
+      setErrorMessage(errorMsg);
+      
+      // Tentar Alert como backup
+      setTimeout(() => {
+        Alert.alert('Erro', errorMsg);
+      }, 100);
     }
   };
 
@@ -76,6 +117,12 @@ export default function Signup() {
             <Text style={styles.description}>
               Preencha os dados para criar sua conta
             </Text>
+
+            {errorMessage ? (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{errorMessage}</Text>
+              </View>
+            ) : null}
 
             <View style={styles.formContainer}>
               <CustomInput
@@ -182,6 +229,21 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     width: '100%',
+  },
+  errorContainer: {
+    backgroundColor: '#ffebee',
+    borderWidth: 1,
+    borderColor: '#ef5350',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    width: '100%',
+  },
+  errorText: {
+    color: '#d32f2f',
+    fontSize: 14,
+    textAlign: 'center',
+    fontWeight: '500',
   },
   signupContainer: {
     justifyContent: 'center',
