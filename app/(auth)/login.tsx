@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Image,
@@ -13,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import { CustomButton, CustomInput } from '../../components';
+import { useAuth } from '../../hooks/useAuth';
 import { authService } from '../../services/auth';
 
 export default function Login() {
@@ -21,6 +22,14 @@ export default function Login() {
 
   // Refs para os inputs
   const passwordInputRef = useRef<TextInput>(null);
+
+  const { isLoggedIn, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && isLoggedIn) {
+      router.replace('/areamedica');
+    }
+  }, [isLoggedIn, isLoading]);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -31,7 +40,7 @@ export default function Login() {
     const result = await authService.login(email, password);
     
     if (result.success) {
-      router.push('/projects');
+      router.push('/areamedica');
     } else {
       Alert.alert('Error', result.message || 'Credenciais inválidas');
     }
@@ -44,6 +53,10 @@ export default function Login() {
   const handleGoHome = () => {
     router.push("/");
   };
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>

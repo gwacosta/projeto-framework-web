@@ -1,5 +1,6 @@
 import { Stack } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
+import Toast from "react-native-toast-message";
 import { useAuth } from "../hooks/useAuth";
 
 export default function RootLayout() {
@@ -13,12 +14,17 @@ export default function RootLayout() {
     );
   }
 
-  return (<Stack screenOptions={{ headerShown: false }}>
-    <Stack.Protected guard={isLoggedIn}>
-      <Stack.Screen name="projects/index" />
-    </Stack.Protected>
-    <Stack.Protected guard={!isLoggedIn}>
-      <Stack.Screen name="index" />
-    </Stack.Protected>
-  </Stack>);
+  return (
+    <>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Protected guard={isLoggedIn}>
+          <Stack.Screen name="areamedica/index" />
+        </Stack.Protected>
+        <Stack.Protected guard={!isLoggedIn}>
+          <Stack.Screen name="index" />
+        </Stack.Protected>
+      </Stack>
+      <Toast />
+    </>
+  );
 }
