@@ -1,6 +1,13 @@
+// Importação do Link do expo-router para navegação
 import { Link } from "expo-router";
+// Importação de componentes nativos do React Native
 import { Text, View } from "react-native";
 
+/**
+ * Tela de Configurações
+ * Página principal para acesso às configurações do sistema
+ * TODO: Implementar funcionalidades de configuração
+ */
 export default function Index() {
   return (
     <View
@@ -10,8 +17,10 @@ export default function Index() {
         alignItems: "center",
       }}
     >
+      {/* Texto informativo sobre a página */}
       <Text>Arquivo de configurações.</Text>
-      <Link href={"/config/user"}>IR PARA CONFIGURAÇÕES DO USUÁRIO</Link>
+      {/* Link para configurações específicas do usuário - TODO: implementar app/config/user.tsx */}
+      <Link href="/config">IR PARA CONFIGURAÇÕES DO USUÁRIO</Link>
     </View>
   );
 }
