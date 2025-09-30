@@ -411,7 +411,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 16,
     right: 16,
-    backgroundColor: '#e74c3c',
+    backgroundColor: '#f8f9fa',
+    borderWidth: 1,
+    borderColor: '#dee2e6',
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 6,
@@ -419,8 +421,8 @@ const styles = StyleSheet.create({
   },
   // Texto do botão de logout
   logoutButtonText: {
-    color: '#ffffff',
+    color: '#6c757d',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '500',
   },
 });
