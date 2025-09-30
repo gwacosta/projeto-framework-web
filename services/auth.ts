@@ -48,7 +48,6 @@ export const authService = {
 
       const user = response.data;
 
-      await AsyncStorage.setItem(AUTH_TOKEN_KEY, JSON.stringify(user));
       return { success: true, user };
     } catch (error) {
       return { success: false, message: 'Ocorreu um erro durante o registro' };

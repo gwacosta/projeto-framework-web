@@ -1,3 +1,16 @@
 {
-  "users": []
+  "users": [
+    {
+      "id": "4a5b",
+      "name": "Guilherme Acosta",
+      "email": "gui@gmail.com",
+      "password": "123456"
+    },
+    {
+      "id": "b768",
+      "name": "Nath Koets",
+      "email": "nath@gmail.com",
+      "password": "123456"
+    }
+  ]
 }

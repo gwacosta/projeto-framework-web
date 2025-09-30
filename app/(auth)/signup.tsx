@@ -3,7 +3,6 @@ import { CustomInput } from "@/components/CustomInput";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -34,7 +33,12 @@ export default function Signup() {
       const errorMsg = 'Por favor, preencha todos os campos';
       setErrorMessage(errorMsg);
       setTimeout(() => {
-        Alert.alert('Erro', errorMsg);
+        Toast.show({
+          type: 'error',
+          text1: errorMsg,
+          position: 'top',
+          visibilityTime: 2000,
+        });
       }, 100);
       return;
     }
@@ -76,7 +80,7 @@ export default function Signup() {
             <View style={styles.contentBox}>
               <TouchableOpacity style={styles.logoContainer} onPress={handleGoHome}>
                 <Image
-                  source={require("@/assets/images/react-logo.png")}
+                  source={require("@/assets/images/logo.png")}
                   style={styles.logo}
                   resizeMode="contain"
                 />
@@ -181,8 +185,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logo: {
-    width: 80,
-    height: 80,
+    width: 120,
+    height: 120,
   },
   title: {
     fontSize: 24,

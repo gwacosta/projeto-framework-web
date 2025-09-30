@@ -12,7 +12,7 @@ export function useAuth() {
   const checkAuthStatus = async () => {
     try {
       const user = await authService.getCurrentUser();
-      setIsLoggedIn(user);
+      setIsLoggedIn(!!user); // Converte para boolean
     } catch (error) {
       setIsLoggedIn(false);
     } finally {

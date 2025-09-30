@@ -2,7 +2,7 @@ import { CustomButton } from '@/components/CustomButton';
 import { authService } from '@/services/auth';
 import { router } from 'expo-router';
 import { useRef, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 export default function ConfirmCode({ onSuccess, userData }: { onSuccess: () => void, userData: { name: string, email: string, password: string } }) {
@@ -36,13 +36,27 @@ export default function ConfirmCode({ onSuccess, userData }: { onSuccess: () => 
           onSuccess();
         }, 2000);
       } else {
-        Alert.alert('Erro', result.message || 'Falha ao criar conta');
+        Toast.show({
+          type: 'error',
+          text1: result.message || 'Falha ao criar conta',
+          position: 'top',
+          visibilityTime: 2000,
+        });
       }
     } catch (error) {
-      Alert.alert('Erro', 'Ocorreu um erro inesperado');
+      Toast.show({
+        type: 'error',
+        text1: 'Ocorreu um erro inesperado',
+        position: 'top',
+        visibilityTime: 2000,
+      });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoHome = () => {
+    router.push("/");
   };
 
   return (
@@ -51,22 +65,45 @@ export default function ConfirmCode({ onSuccess, userData }: { onSuccess: () => 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.content}
       >
-        <View style={styles.contentBox}>
-          <Text style={styles.title}>Código de Confirmação</Text>
-          <Text style={styles.text}>Digite o código enviado para o seu e-mail (simulação)</Text>
-          <Text style={styles.codeTitle}>654321</Text>
-          <TextInput
-            ref={inputRef}
-            style={styles.input}
-            keyboardType="numeric"
-            maxLength={6}
-            value={code}
-            onChangeText={setCode}
-            placeholder="Digite o código"
-            editable={!loading}
-          />
-          <CustomButton title="Avançar" onPress={handleAdvance} disabled={loading} />
-        </View>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.contentBox}>
+            <TouchableOpacity style={styles.logoContainer} onPress={handleGoHome}>
+              <Image
+                source={require('../assets/images/logo.png')}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+
+            <Text style={styles.title}>Código de Confirmação</Text>
+            <Text style={styles.description}>
+              Digite o código enviado para o seu e-mail (simulação)
+            </Text>
+            <Text style={styles.codeDisplay}>654321</Text>
+
+            <View style={styles.formContainer}>
+              <TextInput
+                ref={inputRef}
+                style={styles.input}
+                keyboardType="numeric"
+                maxLength={6}
+                value={code}
+                onChangeText={setCode}
+                placeholder="Digite o código"
+                editable={!loading}
+              />
+              <CustomButton 
+                title="Avançar" 
+                onPress={handleAdvance} 
+                disabled={loading} 
+              />
+            </View>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </View>
   );
@@ -75,54 +112,84 @@ export default function ConfirmCode({ onSuccess, userData }: { onSuccess: () => 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
   content: {
     flex: 1,
+    paddingHorizontal: 20,
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
+    paddingVertical: 20,
   },
   contentBox: {
-    width: 340,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 16,
-    padding: 24,
-    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 32,
     shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 4,
+    elevation: 5,
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
+    alignItems: 'center',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logo: {
+    width: 80,
+    height: 80,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 12,
-  },
-  text: {
-    fontSize: 15,
-    marginBottom: 16,
+    color: '#2c3e50',
+    marginBottom: 8,
     textAlign: 'center',
   },
-  codeTitle: {
+  description: {
+    fontSize: 14,
+    color: '#7f8c8d',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 20,
+  },
+  codeDisplay: {
     fontSize: 28,
     fontWeight: 'bold',
-    letterSpacing: 2,
-    marginBottom: 16,
-    color: '#007AFF',
+    letterSpacing: 4,
+    marginBottom: 24,
+    color: '#3498db',
+    textAlign: 'center',
+    backgroundColor: '#f8f9fa',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#e9ecef',
+  },
+  formContainer: {
+    width: '100%',
   },
   input: {
-    width: 180,
-    height: 48,
+    width: '100%',
+    height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#ddd',
     borderRadius: 8,
     paddingHorizontal: 16,
-    fontSize: 20,
+    fontSize: 18,
     textAlign: 'center',
-    marginBottom: 18,
+    marginBottom: 24,
     backgroundColor: '#fff',
+    letterSpacing: 2,
   },
 });

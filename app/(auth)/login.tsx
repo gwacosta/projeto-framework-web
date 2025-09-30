@@ -1,7 +1,6 @@
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import {
-  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -12,6 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import { CustomButton, CustomInput } from '../../components';
 import { useAuth } from '../../hooks/useAuth';
 import { authService } from '../../services/auth';
@@ -23,7 +23,7 @@ export default function Login() {
   // Refs para os inputs
   const passwordInputRef = useRef<TextInput>(null);
 
-  const { isLoggedIn, isLoading } = useAuth();
+  const { isLoggedIn, isLoading, checkAuthStatus } = useAuth();
 
   useEffect(() => {
     if (!isLoading && isLoggedIn) {
@@ -33,16 +33,28 @@ export default function Login() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Por favor, preencha todos os campos');
+      Toast.show({
+        type: 'error',
+        text1: 'Por favor, preencha todos os campos',
+        position: 'top',
+        visibilityTime: 2000,
+      });
       return;
     }
 
     const result = await authService.login(email, password);
     
     if (result.success) {
-      router.push('/areamedica');
+      // Atualiza o estado de autenticação
+      await checkAuthStatus();
+      router.replace('/areamedica');
     } else {
-      Alert.alert('Error', result.message || 'Credenciais inválidas');
+      Toast.show({
+        type: 'error',
+        text1: result.message || 'Credenciais inválidas',
+        position: 'top',
+        visibilityTime: 2000,
+      });
     }
   };
 
@@ -72,7 +84,7 @@ export default function Login() {
           <View style={styles.contentBox}>
             <TouchableOpacity style={styles.logoContainer} onPress={handleGoHome}>
               <Image
-                source={require('../../assets/images/react-logo.png')}
+                source={require('../../assets/images/logo.png')}
                 style={styles.logo}
                 resizeMode="contain"
               />
@@ -162,8 +174,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   logo: {
-    width: 80,
-    height: 80,
+    width: 120,
+    height: 120,
   },
   title: {
     fontSize: 24,

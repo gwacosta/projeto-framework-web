@@ -1,10 +1,18 @@
 import { router } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
   return (
     <View style={styles.container}>
       <View style={styles.contentBox}>
+        <TouchableOpacity style={styles.logoContainer}>
+          <Image
+            source={require('../assets/images/logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+
         <Text style={styles.title}>Gestão de Atendimentos</Text>
         <Text style={styles.description}>
           Sistema para gestão de atendimentos clínicos
@@ -55,6 +63,14 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 400,
     alignItems: 'center',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  logo: {
+    width: 120,
+    height: 120,
   },
   title: {
     fontSize: 28,
