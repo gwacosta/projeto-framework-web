@@ -1,10 +1,11 @@
 // Importação do router do expo-router para navegação
 import { router } from "expo-router";
 // Importação de hook do React
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 // Importação de componentes nativos do React Native
 import {
   ActivityIndicator,
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -19,6 +20,8 @@ import { CustomButton } from "../../components";
 import { useAuth } from "../../hooks/useAuth";
 // Importação do serviço de autenticação (caminho: services/auth.ts)
 import { authService } from "../../services/auth";
+// Importação do serviço de notícias (caminho: services/news.ts)
+import { NewsArticle, newsService } from "../../services/news";
 
 /**
  * Dados fictícios para demonstração dos próximos atendimentos
@@ -53,6 +56,12 @@ const proximosAtendimentos = [
 export default function AreaMedica() {
   // Obtém dados do hook de autenticação
   const { isLoggedIn, isLoading, checkAuthStatus } = useAuth();
+  
+  // Estados para as notícias
+  const [news, setNews] = useState<NewsArticle[]>([]);
+  const [loadingNews, setLoadingNews] = useState(false);
+  const [newsError, setNewsError] = useState<string | null>(null);
+  const [showNews, setShowNews] = useState(false); // Estado para controlar visibilidade das notícias
 
   // Efeito para verificar autenticação e redirecionar se necessário
   useEffect(() => {
@@ -61,6 +70,51 @@ export default function AreaMedica() {
       router.replace('/(auth)/login');
     }
   }, [isLoggedIn, isLoading]);
+
+  /**
+   * Função para alternar a visibilidade das notícias
+   * Busca as notícias apenas na primeira vez que abre
+   */
+  const toggleNews = () => {
+    const newShowNews = !showNews;
+    setShowNews(newShowNews);
+    
+    // Busca notícias apenas se estiver abrindo pela primeira vez e ainda não tiver notícias
+    if (newShowNews && news.length === 0 && !loadingNews && !newsError) {
+      fetchNews();
+    }
+  };
+
+  /**
+   * Função para buscar notícias de saúde
+   */
+  const fetchNews = async () => {
+    setLoadingNews(true);
+    setNewsError(null);
+    
+    try {
+      // Tenta buscar notícias principais do Brasil primeiro
+      const result = await newsService.getTopHealthNewsBrazil(3);
+      
+      if (result.success && result.articles && result.articles.length > 0) {
+        setNews(result.articles);
+      } else {
+        // Se não houver notícias principais, busca notícias gerais de saúde
+        const fallbackResult = await newsService.getHealthNews(3);
+        
+        if (fallbackResult.success && fallbackResult.articles) {
+          setNews(fallbackResult.articles);
+        } else {
+          setNewsError(fallbackResult.message || 'Não foi possível carregar as notícias');
+        }
+      }
+    } catch (error) {
+      setNewsError('Erro ao buscar notícias');
+      console.error('Erro ao buscar notícias:', error);
+    } finally {
+      setLoadingNews(false);
+    }
+  };
 
   // Exibe indicador de carregamento durante verificação de autenticação
   if (isLoading) {
@@ -178,6 +232,65 @@ export default function AreaMedica() {
     </View>
   );
 
+  /**
+   * Função para abrir link da notícia no navegador
+   * @param url - URL da notícia
+   */
+  const handleOpenNews = async (url: string) => {
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Erro ao abrir notícia',
+          text2: 'Não foi possível abrir o link',
+          position: 'top',
+          visibilityTime: 3000,
+        });
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao abrir notícia',
+        text2: 'Ocorreu um erro ao tentar abrir o link',
+        position: 'top',
+        visibilityTime: 3000,
+      });
+    }
+  };
+
+  /**
+   * Função para renderizar um card de notícia
+   * @param article - Objeto com dados da notícia
+   * @param index - Índice da notícia no array
+   */
+  const renderNewsCard = (article: NewsArticle, index: number) => (
+    <TouchableOpacity
+      key={index}
+      style={styles.newsCard}
+      onPress={() => handleOpenNews(article.url)}
+      activeOpacity={0.7}
+    >
+      <View style={styles.newsHeader}>
+        <Text style={styles.newsSource}>{article.source.name}</Text>
+        <Text style={styles.newsDate}>
+          {newsService.formatPublishDate(article.publishedAt)}
+        </Text>
+      </View>
+      <Text style={styles.newsTitle} numberOfLines={2}>
+        {article.title}
+      </Text>
+      {article.description && (
+        <Text style={styles.newsDescription} numberOfLines={3}>
+          {article.description}
+        </Text>
+      )}
+      <Text style={styles.newsReadMore}>Ler mais →</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={styles.container}>
       <ScrollView 
@@ -202,6 +315,51 @@ export default function AreaMedica() {
               {/* Mapeia e renderiza os cards de atendimento */}
               {proximosAtendimentos.map(renderAtendimentoCard)}
             </View>
+          </View>
+
+          {/* Seção de Notícias de Saúde */}
+          <View style={styles.sectionContainer}>
+            {/* Cabeçalho clicável para expandir/recolher */}
+            <TouchableOpacity 
+              style={styles.newsToggleHeader}
+              onPress={toggleNews}
+              activeOpacity={0.7}
+            >
+              <View style={styles.newsHeaderContent}>
+                <Text style={styles.sectionTitle}>Notícias de Saúde</Text>
+                {loadingNews && showNews && (
+                  <ActivityIndicator size="small" color="#27ae60" style={styles.newsLoader} />
+                )}
+              </View>
+              <Text style={styles.toggleIcon}>{showNews ? '▼' : '▶'}</Text>
+            </TouchableOpacity>
+
+            {/* Conteúdo das notícias (visível apenas quando showNews é true) */}
+            {showNews && (
+              <View style={styles.newsContent}>
+                {newsError ? (
+                  <View style={styles.newsErrorContainer}>
+                    <Text style={styles.newsErrorText}>{newsError}</Text>
+                    <TouchableOpacity onPress={fetchNews} style={styles.retryButton}>
+                      <Text style={styles.retryButtonText}>Tentar novamente</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : news.length > 0 ? (
+                  <View style={styles.newsContainer}>
+                    {news.map(renderNewsCard)}
+                  </View>
+                ) : loadingNews ? (
+                  <View style={styles.newsLoadingContainer}>
+                    <ActivityIndicator size="large" color="#27ae60" />
+                    <Text style={styles.newsLoadingText}>Carregando notícias...</Text>
+                  </View>
+                ) : (
+                  <View style={styles.newsEmptyContainer}>
+                    <Text style={styles.newsEmptyText}>Nenhuma notícia disponível no momento</Text>
+                  </View>
+                )}
+              </View>
+            )}
           </View>
 
           {/* Botões de Ação */}
@@ -424,5 +582,137 @@ const styles = StyleSheet.create({
     color: '#6c757d',
     fontSize: 12,
     fontWeight: '500',
+  },
+  // Estilos para a seção de notícias - Header expansível
+  newsToggleHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#f8f9fa',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e9ecef',
+    marginBottom: 12,
+  },
+  newsHeaderContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  toggleIcon: {
+    fontSize: 16,
+    color: '#27ae60',
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  newsContent: {
+    width: '100%',
+  },
+  newsSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  newsLoader: {
+    marginLeft: 8,
+  },
+  newsLoadingContainer: {
+    alignItems: 'center',
+    paddingVertical: 24,
+  },
+  newsLoadingText: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#7f8c8d',
+  },
+  newsContainer: {
+    gap: 12,
+    width: '100%',
+  },
+  newsCard: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+    padding: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#27ae60',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  newsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  newsSource: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#27ae60',
+    textTransform: 'uppercase',
+  },
+  newsDate: {
+    fontSize: 11,
+    color: '#95a5a6',
+  },
+  newsTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+    marginBottom: 8,
+    lineHeight: 22,
+  },
+  newsDescription: {
+    fontSize: 14,
+    color: '#7f8c8d',
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  newsReadMore: {
+    fontSize: 14,
+    color: '#27ae60',
+    fontWeight: '600',
+  },
+  newsErrorContainer: {
+    backgroundColor: '#ffebee',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+  },
+  newsErrorText: {
+    fontSize: 14,
+    color: '#c0392b',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  retryButton: {
+    backgroundColor: '#e74c3c',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+  },
+  retryButtonText: {
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  newsEmptyContainer: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+    padding: 20,
+    alignItems: 'center',
+  },
+  newsEmptyText: {
+    fontSize: 14,
+    color: '#7f8c8d',
+    textAlign: 'center',
   },
 });
