@@ -1,7 +1,7 @@
 // Importação do router do expo-router para navegação
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 // Importação de hook do React
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 // Importação de componentes nativos do React Native
 import {
   ActivityIndicator,
@@ -15,38 +15,15 @@ import {
 // Importação do Toast para notificações - biblioteca externa
 import Toast from 'react-native-toast-message';
 // Importação de componente customizado (caminho: components/index.ts)
-import { CustomButton } from "../../components";
+import { ConfirmModal, CustomButton } from "../../components";
 // Importação do hook de autenticação (caminho: hooks/useAuth.ts)
 import { useAuth } from "../../hooks/useAuth";
 // Importação do serviço de autenticação (caminho: services/auth.ts)
 import { authService } from "../../services/auth";
 // Importação do serviço de notícias (caminho: services/news.ts)
 import { NewsArticle, newsService } from "../../services/news";
-
-/**
- * Dados fictícios para demonstração dos próximos atendimentos
- * Em uma aplicação real, estes dados viriam de uma API/banco de dados
- */
-const proximosAtendimentos = [
-  {
-    id: 1,
-    horario: "08:30",
-    paciente: "Maria Silva",
-    medico: "Dr. João Santos"
-  },
-  {
-    id: 2,
-    horario: "10:15",
-    paciente: "Pedro Oliveira",
-    medico: "Dra. Ana Costa"
-  },
-  {
-    id: 3,
-    horario: "14:00",
-    paciente: "Carlos Ferreira",
-    medico: "Dr. Roberto Lima"
-  }
-];
+// Importação do serviço de atendimentos (caminho: services/atendimentos.ts)
+import { AtendimentoCompleto, atendimentosService } from "../../services/atendimentos";
 
 /**
  * Tela principal da Área Médica
@@ -63,6 +40,11 @@ export default function AreaMedica() {
   const [newsError, setNewsError] = useState<string | null>(null);
   const [showNews, setShowNews] = useState(false); // Estado para controlar visibilidade das notícias
 
+  // Estados para os atendimentos
+  const [proximosAtendimentos, setProximosAtendimentos] = useState<AtendimentoCompleto[]>([]);
+  const [loadingAtendimentos, setLoadingAtendimentos] = useState(true);
+  const [atendimentoParaCancelar, setAtendimentoParaCancelar] = useState<string | null>(null);
+
   // Efeito para verificar autenticação e redirecionar se necessário
   useEffect(() => {
     if (!isLoading && !isLoggedIn) {
@@ -70,6 +52,39 @@ export default function AreaMedica() {
       router.replace('/(auth)/login');
     }
   }, [isLoggedIn, isLoading]);
+
+  // Efeito para carregar os próximos atendimentos
+  useEffect(() => {
+    if (isLoggedIn) {
+      carregarProximosAtendimentos();
+    }
+  }, [isLoggedIn]);
+
+  // Recarrega os atendimentos sempre que a tela recebe foco
+  useFocusEffect(
+    useCallback(() => {
+      if (isLoggedIn) {
+        carregarProximosAtendimentos();
+      }
+    }, [isLoggedIn])
+  );
+
+  /**
+   * Função para carregar os próximos atendimentos do banco
+   */
+  const carregarProximosAtendimentos = async () => {
+    setLoadingAtendimentos(true);
+    try {
+      const resultado = await atendimentosService.proximosAtendimentos(3);
+      if (resultado.success) {
+        setProximosAtendimentos(resultado.atendimentos as AtendimentoCompleto[]);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar atendimentos:', error);
+    } finally {
+      setLoadingAtendimentos(false);
+    }
+  };
 
   /**
    * Função para alternar a visibilidade das notícias
@@ -132,44 +147,83 @@ export default function AreaMedica() {
 
   /**
    * Handler para cadastrar novo atendimento
-   * TODO: Implementar navegação para tela de cadastro
+   * Navega para tela de cadastro
    */
   const handleCadastrarAtendimento = () => {
-    Toast.show({
-      type: 'info',
-      text1: 'Funcionalidade em desenvolvimento',
-      text2: 'Cadastro de atendimento será implementado em breve',
-      position: 'top',
-      visibilityTime: 3000,
-    });
+    router.push('/areamedica/cadastro-atendimento');
   };
 
   /**
    * Handler para cadastrar novo paciente
-   * TODO: Implementar navegação para tela de cadastro
+   * Navega para tela de cadastro
    */
   const handleCadastrarPaciente = () => {
-    Toast.show({
-      type: 'info',
-      text1: 'Funcionalidade em desenvolvimento',
-      text2: 'Cadastro de paciente será implementado em breve',
-      position: 'top',
-      visibilityTime: 3000,
-    });
+    router.push('/areamedica/cadastro-paciente');
+  };
+
+  /**
+   * Handler para cadastrar novo médico
+   * Navega para tela de cadastro
+   */
+  const handleCadastrarFuncionario = () => {
+    router.push('/areamedica/cadastro-funcionario');
   };
 
   /**
    * Handler para ver lista completa de atendimentos
-   * TODO: Implementar navegação para tela de listagem
+   * Navega para tela de listagem
    */
   const handleVerTodosAtendimentos = () => {
-    Toast.show({
-      type: 'info',
-      text1: 'Funcionalidade em desenvolvimento',
-      text2: 'Lista completa de atendimentos será implementada em breve',
-      position: 'top',
-      visibilityTime: 3000,
-    });
+    router.push('/areamedica/lista-atendimentos');
+  };
+
+  /**
+   * Handler para abrir confirmação de cancelamento
+   */
+  const handleCancelarAtendimento = (id: string | undefined) => {
+    if (!id) return;
+    setAtendimentoParaCancelar(id);
+  };
+
+  /**
+   * Confirma o cancelamento do atendimento
+   */
+  const confirmarCancelamento = async () => {
+    if (!atendimentoParaCancelar) return;
+
+    try {
+      const resultado = await atendimentosService.cancelar(atendimentoParaCancelar);
+
+      if (resultado.success) {
+        Toast.show({
+          type: 'success',
+          text1: 'Sucesso!',
+          text2: resultado.message,
+          position: 'top',
+          visibilityTime: 2000,
+        });
+        // Recarrega a lista de próximos atendimentos
+        carregarProximosAtendimentos();
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Erro ao cancelar',
+          text2: resultado.message || 'Não foi possível cancelar o atendimento',
+          position: 'top',
+          visibilityTime: 3000,
+        });
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro inesperado',
+        text2: 'Ocorreu um erro ao cancelar o atendimento',
+        position: 'top',
+        visibilityTime: 3000,
+      });
+    } finally {
+      setAtendimentoParaCancelar(null);
+    }
   };
 
   /**
@@ -218,7 +272,7 @@ export default function AreaMedica() {
    * Função para renderizar um card de atendimento
    * @param atendimento - Objeto com dados do atendimento
    */
-  const renderAtendimentoCard = (atendimento: typeof proximosAtendimentos[0]) => (
+  const renderAtendimentoCard = (atendimento: AtendimentoCompleto) => (
     <View key={atendimento.id} style={styles.atendimentoCard}>
       {/* Container do horário */}
       <View style={styles.horarioContainer}>
@@ -226,9 +280,18 @@ export default function AreaMedica() {
       </View>
       {/* Container das informações do atendimento */}
       <View style={styles.infoContainer}>
-        <Text style={styles.pacienteText}>{atendimento.paciente}</Text>
-        <Text style={styles.medicoText}>{atendimento.medico}</Text>
+        <Text style={styles.pacienteText}>{atendimento.paciente?.nome || 'Paciente'}</Text>
+        <Text style={styles.medicoText}>{atendimento.funcionario?.nome || 'Médico'}</Text>
       </View>
+      {/* Botão de cancelar - apenas para atendimentos agendados */}
+      {atendimento.status === 'agendado' && (
+        <TouchableOpacity
+          style={styles.cancelAtendimentoButton}
+          onPress={() => handleCancelarAtendimento(atendimento.id)}
+        >
+          <Text style={styles.cancelAtendimentoButtonText}>Cancelar</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 
@@ -311,10 +374,22 @@ export default function AreaMedica() {
           {/* Seção de Próximos Atendimentos */}
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Próximos Atendimentos</Text>
-            <View style={styles.atendimentosContainer}>
-              {/* Mapeia e renderiza os cards de atendimento */}
-              {proximosAtendimentos.map(renderAtendimentoCard)}
-            </View>
+            {loadingAtendimentos ? (
+              <View style={styles.loadingAtendimentosContainer}>
+                <ActivityIndicator size="small" color="#3498db" />
+                <Text style={styles.loadingAtendimentosText}>Carregando...</Text>
+              </View>
+            ) : proximosAtendimentos.length > 0 ? (
+              <View style={styles.atendimentosContainer}>
+                {proximosAtendimentos.map(renderAtendimentoCard)}
+              </View>
+            ) : (
+              <View style={styles.emptyAtendimentosContainer}>
+                <Text style={styles.emptyAtendimentosText}>
+                  Nenhum atendimento agendado
+                </Text>
+              </View>
+            )}
           </View>
 
           {/* Seção de Notícias de Saúde */}
@@ -379,6 +454,14 @@ export default function AreaMedica() {
               <Text style={styles.secondaryButtonText}>Cadastrar Paciente</Text>
             </TouchableOpacity>
 
+            {/* Botão para cadastrar médico */}
+            <TouchableOpacity
+              style={styles.secondaryButton}
+              onPress={handleCadastrarFuncionario}
+            >
+              <Text style={styles.secondaryButtonText}>Cadastrar Médico</Text>
+            </TouchableOpacity>
+
             {/* Botão terciário para ver todos os atendimentos */}
             <TouchableOpacity
               style={styles.tertiaryButton}
@@ -389,6 +472,15 @@ export default function AreaMedica() {
           </View>
         </View>
       </ScrollView>
+
+      {/* Modal de Confirmação */}
+      <ConfirmModal
+        visible={!!atendimentoParaCancelar}
+        title="Cancelar Atendimento"
+        message="Tem certeza que deseja cancelar este atendimento?"
+        onConfirm={confirmarCancelamento}
+        onCancel={() => setAtendimentoParaCancelar(null)}
+      />
     </View>
   );
 }
@@ -472,6 +564,25 @@ const styles = StyleSheet.create({
     gap: 12,
     width: '100%',
   },
+  // Estados de loading e vazio para atendimentos
+  loadingAtendimentosContainer: {
+    paddingVertical: 20,
+    alignItems: 'center',
+  },
+  loadingAtendimentosText: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#7f8c8d',
+  },
+  emptyAtendimentosContainer: {
+    paddingVertical: 20,
+    alignItems: 'center',
+  },
+  emptyAtendimentosText: {
+    fontSize: 14,
+    color: '#7f8c8d',
+    textAlign: 'center',
+  },
   // Estilo do card de atendimento
   atendimentoCard: {
     flexDirection: 'row',
@@ -518,6 +629,24 @@ const styles = StyleSheet.create({
   medicoText: {
     fontSize: 14,
     color: '#7f8c8d',
+  },
+  // Botão de cancelar atendimento no card
+  cancelAtendimentoButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: '#e74c3c',
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // Texto do botão de cancelar atendimento
+  cancelAtendimentoButtonText: {
+    color: '#ffffff',
+    fontSize: 11,
+    fontWeight: '600',
   },
   // Container dos botões de ação
   buttonContainer: {

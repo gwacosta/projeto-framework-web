@@ -1,10 +1,48 @@
 {
   "users": [
     {
-      "id": "2b62",
-      "name": "User Teste",
+      "id": "3a1b",
+      "name": "Teste",
       "email": "testuser@gmail.com",
       "password": "User123"
+    }
+  ],
+  "pacientes": [
+    {
+      "id": "ad6f",
+      "nome": "Guilherme Acosta",
+      "cpf": "546.546.456-46",
+      "dataNascimento": "1991-08-19",
+      "telefone": "(15) 51515-1515",
+      "email": "gui@gmail.com",
+      "endereco": "Rua oikasjnfoljaiosdj 867",
+      "criadoEm": "2025-11-24T22:25:11.401Z"
+    }
+  ],
+  "funcionarios": [
+    {
+      "id": "4aae",
+      "nome": "Jose Acosta",
+      "cpf": "165.656.456-46",
+      "tipo": "medico",
+      "especialidade": "Odontologia",
+      "crm": "1234567",
+      "telefone": "(54) 64654-6456",
+      "email": "jose@gmail.com",
+      "criadoEm": "2025-11-24T22:25:20.978Z"
+    }
+  ],
+  "atendimentos": [
+    {
+      "id": "ab3a",
+      "pacienteId": "ad6f",
+      "funcionarioId": "4aae",
+      "data": "2025-11-24",
+      "horario": "19:30",
+      "tipo": "Consulta",
+      "status": "cancelado",
+      "observacoes": "teste",
+      "criadoEm": "2025-11-24T22:25:34.850Z"
     }
   ]
 }

@@ -36,6 +36,14 @@ export default function RootLayout() {
         <Stack.Screen name="(auth)/signup" />
         {/* Tela principal da área médica (app/areamedica/index.tsx) */}
         <Stack.Screen name="areamedica/index" />
+        {/* Tela de cadastro de paciente (app/areamedica/cadastro-paciente.tsx) */}
+        <Stack.Screen name="areamedica/cadastro-paciente" />
+        {/* Tela de cadastro de funcionário (app/areamedica/cadastro-funcionario.tsx) */}
+        <Stack.Screen name="areamedica/cadastro-funcionario" />
+        {/* Tela de cadastro de atendimento (app/areamedica/cadastro-atendimento.tsx) */}
+        <Stack.Screen name="areamedica/cadastro-atendimento" />
+        {/* Tela de lista de atendimentos (app/areamedica/lista-atendimentos.tsx) */}
+        <Stack.Screen name="areamedica/lista-atendimentos" />
         {/* Tela de detalhes da área médica com parâmetro dinâmico (app/areamedica/[id].tsx) */}
         <Stack.Screen name="areamedica/[id]" />
         {/* Tela de configurações (app/config/index.tsx) */}
