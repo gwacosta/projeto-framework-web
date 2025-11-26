@@ -4,13 +4,12 @@ import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 // Importação de componentes nativos do React Native
 import {
-    ActivityIndicator,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 // Importação do Toast para notificações
 import Toast from 'react-native-toast-message';
@@ -20,6 +19,8 @@ import { CustomButton, CustomInput } from "../../components";
 import { atendimentosService } from "../../services/atendimentos";
 import { Funcionario, funcionariosService } from "../../services/funcionarios";
 import { Paciente, pacientesService } from "../../services/pacientes";
+// Importação dos estilos centralizados
+import { styles } from "../../styles/areamedica/cadastro-atendimento.styles";
 
 /**
  * Tela de Cadastro de Atendimentos
@@ -385,154 +386,3 @@ export default function CadastroAtendimento() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  contentBox: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 24,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
-    width: '100%',
-    maxWidth: 400,
-    alignSelf: 'center',
-    position: 'relative',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 16,
-    color: '#7f8c8d',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 16,
-    left: 16,
-    zIndex: 1,
-    padding: 8,
-  },
-  backButtonText: {
-    fontSize: 28,
-    color: '#3498db',
-    fontWeight: 'bold',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2c3e50',
-    marginBottom: 8,
-    textAlign: 'center',
-    marginTop: 24,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#7f8c8d',
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  formContainer: {
-    width: '100%',
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#2c3e50',
-    marginBottom: 8,
-    marginTop: 8,
-  },
-  selectContainer: {
-    maxHeight: 120,
-    marginBottom: 15,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-  },
-  selectItem: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
-    backgroundColor: '#f8f9fa',
-  },
-  selectItemActive: {
-    backgroundColor: '#3498db',
-  },
-  selectText: {
-    fontSize: 14,
-    color: '#2c3e50',
-  },
-  selectTextActive: {
-    color: '#ffffff',
-    fontWeight: '600',
-  },
-  tipoContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 15,
-  },
-  tipoButton: {
-    flex: 1,
-    minWidth: '45%',
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e9ecef',
-    backgroundColor: '#f8f9fa',
-    alignItems: 'center',
-  },
-  tipoButtonActive: {
-    backgroundColor: '#3498db',
-    borderColor: '#3498db',
-  },
-  tipoText: {
-    fontSize: 14,
-    color: '#7f8c8d',
-    fontWeight: '500',
-  },
-  tipoTextActive: {
-    color: '#ffffff',
-    fontWeight: '600',
-  },
-  cancelButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#e74c3c',
-    paddingVertical: 14,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 12,
-  },
-  cancelButtonText: {
-    color: '#e74c3c',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});

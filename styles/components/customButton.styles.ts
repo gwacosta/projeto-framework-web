@@ -1,8 +1,8 @@
-// Importação da API de estilos do React Native
 import { StyleSheet } from 'react-native';
 
 /**
  * Estilos para o componente CustomButton
+ * Arquivo: components/CustomButton/index.tsx
  * Define variações visuais para botões primários e de link
  */
 export const styles = StyleSheet.create({

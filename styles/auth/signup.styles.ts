@@ -1,8 +1,8 @@
 import { StyleSheet } from 'react-native';
 
 /**
- * Estilos para a tela de Login
- * Arquivo: app/(auth)/login.tsx
+ * Estilos para a tela de cadastro (Signup)
+ * Arquivo: app/(auth)/signup.tsx
  */
 export const styles = StyleSheet.create({
   // Container principal
@@ -69,13 +69,30 @@ export const styles = StyleSheet.create({
   formContainer: {
     width: '100%',
   },
-  // Container da seção de cadastro
+  // Container de mensagem de erro
+  errorContainer: {
+    backgroundColor: '#ffebee',
+    borderWidth: 1,
+    borderColor: '#ef5350',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    width: '100%',
+  },
+  // Texto de erro
+  errorText: {
+    color: '#d32f2f',
+    fontSize: 14,
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  // Container da seção de login
   signupContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
   },
-  // Texto da seção de cadastro
+  // Texto da seção de login
   signupText: {
     color: '#7f8c8d',
     fontSize: 14,

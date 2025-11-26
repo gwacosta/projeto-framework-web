@@ -1,8 +1,8 @@
-// Importação da API de estilos do React Native
 import { StyleSheet } from 'react-native';
 
 /**
  * Estilos para o componente CustomInput
+ * Arquivo: components/CustomInput/index.tsx
  * Define aparência consistente para campos de entrada em toda a aplicação
  */
 export const styles = StyleSheet.create({

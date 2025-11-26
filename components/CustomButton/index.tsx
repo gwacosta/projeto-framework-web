@@ -1,7 +1,7 @@
 // Importação de componentes nativos do React Native
 import { Text, TouchableOpacity, TouchableOpacityProps } from 'react-native';
-// Importação dos estilos do botão (caminho: components/CustomButton/styles.ts)
-import { styles } from './styles';
+// Importação dos estilos centralizados
+import { styles } from '@/styles/components/customButton.styles';
 
 /**
  * Interface para as propriedades do CustomButton

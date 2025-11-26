@@ -1,8 +1,8 @@
 import { StyleSheet } from 'react-native';
 
 /**
- * Estilos para a tela de Login
- * Arquivo: app/(auth)/login.tsx
+ * Estilos para o componente ConfirmCode
+ * Arquivo: components/ConfirmCode.tsx
  */
 export const styles = StyleSheet.create({
   // Container principal
@@ -44,10 +44,10 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
   },
-  // Dimensões da logo
+  // Dimensões da logo (menor que outras telas)
   logo: {
-    width: 120,
-    height: 120,
+    width: 80,
+    height: 80,
   },
   // Estilo do título
   title: {
@@ -65,21 +65,37 @@ export const styles = StyleSheet.create({
     marginBottom: 24,
     lineHeight: 20,
   },
+  // Exibição visual do código correto
+  codeDisplay: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    letterSpacing: 4,
+    marginBottom: 24,
+    color: '#3498db',
+    textAlign: 'center',
+    backgroundColor: '#f8f9fa',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#e9ecef',
+  },
   // Container do formulário
   formContainer: {
     width: '100%',
   },
-  // Container da seção de cadastro
-  signupContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  // Texto da seção de cadastro
-  signupText: {
-    color: '#7f8c8d',
-    fontSize: 14,
+  // Campo de entrada do código
+  input: {
+    width: '100%',
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    fontSize: 18,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: 24,
+    backgroundColor: '#fff',
+    letterSpacing: 2,
   },
 });

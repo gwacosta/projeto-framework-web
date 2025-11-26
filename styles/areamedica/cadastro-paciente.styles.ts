@@ -1,31 +1,27 @@
 import { StyleSheet } from 'react-native';
 
 /**
- * Estilos para a tela de Login
- * Arquivo: app/(auth)/login.tsx
+ * Estilos para a tela de Cadastro de Paciente
+ * Arquivo: app/areamedica/cadastro-paciente.tsx
  */
 export const styles = StyleSheet.create({
-  // Container principal
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  // Container do conteúdo
-  content: {
+  scrollView: {
     flex: 1,
-    paddingHorizontal: 20,
   },
-  // Conteúdo do scroll
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
+    paddingHorizontal: 20,
     paddingVertical: 20,
   },
-  // Caixa principal de conteúdo com sombra
   contentBox: {
     backgroundColor: '#ffffff',
     borderRadius: 12,
-    padding: 32,
+    padding: 24,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -37,49 +33,51 @@ export const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 400,
     alignSelf: 'center',
-    alignItems: 'center',
+    position: 'relative',
   },
-  // Container da logo
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: 20,
+  backButton: {
+    position: 'absolute',
+    top: 16,
+    left: 16,
+    zIndex: 1,
+    padding: 8,
   },
-  // Dimensões da logo
-  logo: {
-    width: 120,
-    height: 120,
+  backButtonText: {
+    fontSize: 28,
+    color: '#3498db',
+    fontWeight: 'bold',
   },
-  // Estilo do título
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#2c3e50',
     marginBottom: 8,
     textAlign: 'center',
+    marginTop: 24,
   },
-  // Estilo da descrição
-  description: {
+  subtitle: {
     fontSize: 14,
     color: '#7f8c8d',
     textAlign: 'center',
     marginBottom: 24,
-    lineHeight: 20,
   },
-  // Container do formulário
   formContainer: {
     width: '100%',
   },
-  // Container da seção de cadastro
-  signupContainer: {
-    justifyContent: 'center',
+  cancelButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#e74c3c',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 8,
     alignItems: 'center',
-    marginTop: 20,
+    justifyContent: 'center',
+    marginTop: 12,
   },
-  // Texto da seção de cadastro
-  signupText: {
-    color: '#7f8c8d',
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 8,
+  cancelButtonText: {
+    color: '#e74c3c',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

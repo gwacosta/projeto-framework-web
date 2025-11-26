@@ -2,8 +2,8 @@
 import { forwardRef } from 'react';
 // Importação de componentes nativos do React Native
 import { TextInput, TextInputProps } from 'react-native';
-// Importação dos estilos do input (caminho: components/CustomInput/styles.ts)
-import { styles } from './styles';
+// Importação dos estilos centralizados
+import { styles } from '@/styles/components/customInput.styles';
 
 /**
  * Interface para as propriedades do CustomInput
